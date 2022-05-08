@@ -1,0 +1,27 @@
+type CirculatingSupply @entity {
+  id: ID!
+  supply: BigInt!
+  timestamp: BigInt!
+}
+
+type CirculatingSupplyByDate @entity {
+  id: ID!
+  supply: BigInt!
+  timestamp: BigInt!
+}
+
+type CirculatingSupplyByMonth @entity {
+  id: ID!
+  supply: BigInt!
+  timestamp: BigInt!
+}
+
+type Mint @entity {
+  id: ID!
+  value: BigInt!
+}
+
+type Burn @entity {
+  id: ID!
+  value: BigInt!
+}
