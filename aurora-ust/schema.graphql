@@ -16,6 +16,12 @@ type CirculatingSupplyByMonth @entity {
   timestamp: BigInt!
 }
 
+type CurrentSupply @entity {
+  id: ID!
+  supply: BigInt!
+  timestamp: BigInt!
+}
+
 type Mint @entity {
   id: ID!
   value: BigInt!

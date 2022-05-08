@@ -1,11 +1,11 @@
-/* import { BigInt } from "@graphprotocol/graph-ts" */
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
   atUST,
   Approval,
   OwnershipTransferred,
   Transfer
 } from "../generated/atUST/atUST"
-import { CirculatingSupply, Mint, Burn, CirculatingSupplyByDate, CirculatingSupplyByMonth } from "../generated/schema"
+import { CirculatingSupply, Mint, Burn, CirculatingSupplyByDate, CirculatingSupplyByMonth, CurrentSupply } from "../generated/schema"
 
 export function handleApproval(event: Approval): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -65,6 +65,13 @@ export function handleApproval(event: Approval): void {
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
 export function handleTransfer(event: Transfer): void {
+  let currentSupply = CurrentSupply.load('1');
+  if(!currentSupply) {
+    currentSupply = new CurrentSupply('1');
+    currentSupply.supply = new BigInt(0);
+    currentSupply.timestamp = new BigInt(0);
+  }
+
   if(event.params.from.toHex() == '0x0000000000000000000000000000000000000000') {
     let mint = Mint.load(event.transaction.hash.toHex());
     if(!mint) {
@@ -72,6 +79,10 @@ export function handleTransfer(event: Transfer): void {
     }
   
     mint.value = event.params.value;
+
+    currentSupply.supply = currentSupply.supply + event.params.value;
+    currentSupply.timestamp = event.block.timestamp;
+    currentSupply.save();
   
     mint.save();
   }
@@ -83,7 +94,11 @@ export function handleTransfer(event: Transfer): void {
     }
   
     burn.value = event.params.value;
-  
+
+    currentSupply.supply = currentSupply.supply - event.params.value;
+    currentSupply.timestamp = event.block.timestamp;
+    currentSupply.save();
+
     burn.save();
   }
 
@@ -95,8 +110,7 @@ export function handleTransfer(event: Transfer): void {
       supply = new CirculatingSupply(event.block.number.toString());
     }
 
-    let tokenSupplyRes = contract.totalSupply();
-    supply.supply = tokenSupplyRes;
+    supply.supply = currentSupply.supply;
     supply.timestamp = event.block.timestamp;
 
     supply.save();
@@ -116,12 +130,12 @@ export function handleTransfer(event: Transfer): void {
     if(!supplyByDate) {
       supplyByDate = new CirculatingSupplyByDate(dateStr);
       supplyByDate.timestamp = event.block.timestamp;
-      supplyByDate.supply = tokenSupplyRes;
+      supplyByDate.supply = currentSupply.supply;
     }
 
     else if(supplyByDate.timestamp < event.block.timestamp) {
         supplyByDate.timestamp = event.block.timestamp;
-        supplyByDate.supply = tokenSupplyRes;
+        supplyByDate.supply = currentSupply.supply;
     }
     
     supplyByDate.save();
@@ -130,12 +144,12 @@ export function handleTransfer(event: Transfer): void {
     if(!supplyByMonth) {
       supplyByMonth = new CirculatingSupplyByMonth(monthStr);
       supplyByMonth.timestamp = event.block.timestamp;
-      supplyByMonth.supply = tokenSupplyRes;
+      supplyByMonth.supply = currentSupply.supply;
     }
 
     else if(supplyByMonth.timestamp < event.block.timestamp) {
         supplyByMonth.timestamp = event.block.timestamp;
-        supplyByMonth.supply = tokenSupplyRes;
+        supplyByMonth.supply = currentSupply.supply;
     }
     
     supplyByMonth.save();
