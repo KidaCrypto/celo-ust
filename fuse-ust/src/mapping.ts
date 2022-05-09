@@ -65,10 +65,6 @@ export function handleApproval(event: Approval): void {
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
 export function handleTransfer(event: Transfer): void {
-  if(!event) {
-    return;
-  }
-
   let currentSupply = CurrentSupply.load('1');
   if(!currentSupply) {
     currentSupply = new CurrentSupply('1');
