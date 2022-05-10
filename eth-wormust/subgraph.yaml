@@ -1,0 +1,24 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: wormUST
+    network: mainnet
+    source:
+      address: "0xa693B19d2931d498c5B318dF961919BB4aee87a5"
+      abi: wormUST
+      startBlock: 13408365
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transfer
+      abis:
+        - name: wormUST
+          file: ./abis/wormUST.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts

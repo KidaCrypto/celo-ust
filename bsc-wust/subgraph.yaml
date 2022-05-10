@@ -1,0 +1,27 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: wUST
+    network: bsc
+    source:
+      address: "0x23396cf899ca06c4472205fc903bdb4de249d6fc"
+      abi: wUST
+      startBlock: 3543540
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - Burn
+        - OwnershipTransferred
+        - Transfer
+      abis:
+        - name: wUST
+          file: ./abis/wUST.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts

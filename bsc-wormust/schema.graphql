@@ -1,0 +1,17 @@
+type CirculatingSupplyByDate @entity {
+  id: ID!
+  supply: BigInt!
+  timestamp: BigInt!
+}
+
+type CirculatingSupplyByMonth @entity {
+  id: ID!
+  supply: BigInt!
+  timestamp: BigInt!
+}
+
+type CurrentSupply @entity {
+  id: ID!
+  supply: BigInt!
+  timestamp: BigInt!
+}

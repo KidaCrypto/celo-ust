@@ -1,0 +1,24 @@
+specVersion: 0.0.2
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: wormUST
+    network: bsc
+    source:
+      address: "0x3d4350cd54aef9f9b2c29435e0fa809957b3f30a"
+      abi: wormUST
+      startBlock: 11729651
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transfer
+      abis:
+        - name: wormUST
+          file: wormUST\abis\wormUST.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: wormUST\wormUST.wasm
